@@ -1,6 +1,7 @@
 SRCS := $(shell find src -type f -name "*.cpp" -or -name "*.h" -or -name "*.hpp")
 
 all:
+	@echo "deps - fetch all the third party dependencies"
 	@echo "format - run clang format on source files"
 	@echo "dev_build - initialize cmake for development"
 	@echo "release_build - initialize cmake for release"
