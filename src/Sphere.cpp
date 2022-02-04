@@ -3,23 +3,21 @@
 const float PI = 3.14159265359f;
 const float TAU = 6.28318530717f;
 
-Sphere::Sphere(unsigned int xSegments, unsigned int ySegments) {
+Sphere::Sphere(u32 xSegments, u32 ySegments, const std::filesystem::path &runtime_path, const glm::vec3 &pos,
+               const glm::vec3 scale)
+    : runtime_path{runtime_path}, position{pos}, scale{scale} {
 
-  Vertex vertex;
-  glm::vec3 vector;
-
-  for (unsigned int y = 0; y <= ySegments; ++y) {
-    for (unsigned int x = 0; x <= xSegments; ++x) {
+  for (u32 y = 0; y <= ySegments; ++y) {
+    for (u32 x = 0; x <= xSegments; ++x) {
 
       Vertex vertex;
       glm::vec3 vector;
 
-      float xSegment = (float)x / (float)xSegments;
-      float ySegment = (float)y / (float)ySegments;
-      float xPos =
-          std::cos(xSegment * TAU) * std::sin(ySegment * PI); // TAU is 2PI
-      float yPos = std::cos(ySegment * PI);
-      float zPos = std::sin(xSegment * TAU) * std::sin(ySegment * PI);
+      f32 xSegment = (float)x / (float)xSegments;
+      f32 ySegment = (float)y / (float)ySegments;
+      f32 xPos = std::cos(xSegment * TAU) * std::sin(ySegment * PI); // TAU is 2PI
+      f32 yPos = std::cos(ySegment * PI);
+      f32 zPos = std::sin(xSegment * TAU) * std::sin(ySegment * PI);
 
       vector.x = xPos;
       vector.y = yPos;
@@ -33,9 +31,8 @@ Sphere::Sphere(unsigned int xSegments, unsigned int ySegments) {
     }
   }
 
-  bool oddRow = false;
-  for (int y = 0; y < ySegments; ++y) {
-    for (int x = 0; x < xSegments; ++x) {
+  for (u32 y = 0; y < ySegments; ++y) {
+    for (u32 x = 0; x < xSegments; ++x) {
       Indices.push_back((y + 1) * (xSegments + 1) + x);
       Indices.push_back(y * (xSegments + 1) + x);
       Indices.push_back(y * (xSegments + 1) + x + 1);
@@ -50,6 +47,13 @@ Sphere::Sphere(unsigned int xSegments, unsigned int ySegments) {
   setupSphere();
 }
 
-void Sphere::setupSphere() {}
+void Sphere::setupSphere() {
+  this->mesh =
+      Mesh{this->vertices, this->Indices, std::vector<Texture>{}, std::vector<Material>{}, std::string("sphere")};
+}
 
-void Sphere::Draw() {}
+void Sphere::Draw(Shader &shader) {
+  GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+  this->mesh.draw(shader);
+  GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+}
