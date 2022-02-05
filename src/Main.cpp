@@ -47,9 +47,9 @@ public:
         sphere{30, 30, runtime_path, glm::vec3{15.0f, 0.0f, 15.0f}, glm::vec3{1.55f}}, text{runtime_path} {
     static glm::mat4 projection_matrix = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
 
-    this->woman_model.load(runtime_path / "models/woman1.obj");
+    this->woman_model.load(this->runtime_path / "models/woman1.obj");
 
-    this->woman_shader = Shader{runtime_path / "shaders/woman.glsl"};
+    this->woman_shader = Shader{this->runtime_path / "shaders/woman.glsl"};
     this->woman_shader.bind();
     this->woman_shader.set_uniformmat4f("u_projection_matrix", projection_matrix);
 
@@ -57,12 +57,16 @@ public:
     this->sphere_shader.bind();
     this->sphere_shader.set_uniformmat4f("u_projection_matrix", projection_matrix);
 
-    glfwGetCursorPos(window, &this->mouse.x, &this->mouse.y);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwGetCursorPos(window, &this->mouse.x, &this->mouse.y);
   }
   ~MainScene() {}
 
   void on_update(f32 delta) override {
+    if (KEY_PRESSED(window, GLFW_KEY_Q)) {
+      glfwSetWindowShouldClose(window, true);
+      return;
+    }
     static bool r_pressed = false;
     if (KEY_PRESSED(window, GLFW_KEY_R)) {
       if (!r_pressed) {
@@ -189,41 +193,6 @@ public:
   }
 };
 
-// From https://stackoverflow.com/a/31526753
-GLFWmonitor *guess_current_monitor(GLFWwindow *window) {
-  int nmonitors, i;
-  int wx, wy, ww, wh;
-  int mx, my, mw, mh;
-  int overlap, bestoverlap;
-  GLFWmonitor *bestmonitor;
-  GLFWmonitor **monitors;
-  const GLFWvidmode *mode;
-
-  bestoverlap = 0;
-  bestmonitor = NULL;
-
-  glfwGetWindowPos(window, &wx, &wy);
-  glfwGetWindowSize(window, &ww, &wh);
-  monitors = glfwGetMonitors(&nmonitors);
-
-  for (i = 0; i < nmonitors; i++) {
-    mode = glfwGetVideoMode(monitors[i]);
-    glfwGetMonitorPos(monitors[i], &mx, &my);
-    mw = mode->width;
-    mh = mode->height;
-
-    overlap = std::max(0, std::min(wx + ww, mx + mw) - std::max(wx, mx)) *
-              std::max(0, std::min(wy + wh, my + mh) - std::max(wy, my));
-
-    if (bestoverlap < overlap) {
-      bestoverlap = overlap;
-      bestmonitor = monitors[i];
-    }
-  }
-
-  return bestmonitor;
-}
-
 i32 main(i32 argc, char *argv[]) {
   std::string runtime_directory = argc > 1 ? argv[1] : "./";
   if (runtime_directory.back() != '/') {
@@ -253,14 +222,6 @@ i32 main(i32 argc, char *argv[]) {
 
     window = glfwCreateWindow(mode->width, mode->height, "Sphere", monitor, NULL);
 
-    // Do a switcheroo to the current monitor
-    monitor = guess_current_monitor(window);
-    mode = glfwGetVideoMode(monitor);
-    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
     if (!window) {
       throw std::runtime_error("Could not create window");
     }

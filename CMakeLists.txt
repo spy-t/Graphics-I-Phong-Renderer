@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(graphics_project VERSION 1.0 LANGUAGES CXX)
+project(sphere VERSION 1.0 LANGUAGES CXX)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
