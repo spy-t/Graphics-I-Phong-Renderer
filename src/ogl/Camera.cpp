@@ -57,3 +57,8 @@ void Camera::update() {
   this->right = glm::normalize(glm::cross(this->front, this->world_up));
   this->up = glm::normalize(glm::cross(this->right, this->front));
 }
+
+void Camera::center() {
+  this->rotate(Camera::DEFAULT_YAW - this->yaw, Camera::DEFAULT_PITCH - this->pitch);
+  this->update();
+}

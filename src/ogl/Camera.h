@@ -50,6 +50,7 @@ public:
   glm::mat4 get_view_matrix() const;
   void move(f32 x, f32 y, f32 z);
   void rotate(f32 yaw, f32 pitch);
+  void center();
   void update();
 };
 

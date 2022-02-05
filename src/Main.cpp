@@ -59,6 +59,8 @@ public:
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwGetCursorPos(window, &this->mouse.x, &this->mouse.y);
+
+    this->camera.center();
   }
   ~MainScene() {}
 
@@ -96,6 +98,17 @@ public:
       l_pressed = false;
     }
 
+    static bool c_pressed = false;
+    if (KEY_PRESSED(window, GLFW_KEY_C)) {
+      if (!c_pressed) {
+        this->camera.center();
+        c_pressed = true;
+      }
+    }
+    if (KEY_RELEASED(window, GLFW_KEY_C)) {
+      c_pressed = false;
+    }
+
     f32 x = 0;
     f32 y = 0;
     if (KEY_PRESSED(window, GLFW_KEY_W)) {
@@ -117,9 +130,11 @@ public:
 
     glfwGetCursorPos(window, &this->mouse.x, &this->mouse.y);
 
-    f64 x_offset = -(last_x - this->mouse.x) * this->camera_speed * this->camera_sensitivity;
-    f64 y_offset = (last_y - this->mouse.y) * this->camera_speed * this->camera_sensitivity;
-    this->camera.rotate(x_offset, y_offset);
+    if (this->mouse.x != last_x || this->mouse.y != last_y) {
+      f64 x_offset = -(last_x - this->mouse.x) * this->camera_speed * this->camera_sensitivity;
+      f64 y_offset = (last_y - this->mouse.y) * this->camera_speed * this->camera_sensitivity;
+      this->camera.rotate(x_offset, y_offset);
+    }
     this->camera.update();
 
     if (KEY_PRESSED(window, GLFW_KEY_H)) {

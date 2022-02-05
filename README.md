@@ -16,7 +16,7 @@
 ```bash
 make deps # download the third party dependencies (that cannot be vendored)
 make release_build # generate the build files using CMake
-cd build
+cd build_release
 make -j <num threads> # (or cmake --build build if on cmake 3.15+)
 ```
 
@@ -32,6 +32,7 @@ make -j <num threads> # (or cmake --build build if on cmake 3.15+)
 
 - WASD/ποντίκι - κίνηση κάμερας
 - H/J - αύξηση μείωση ταχύτητας σφαίρας
+- C - center camera
 - Q - τερματισμός προγράμματος
 
 ## Report
